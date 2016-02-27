@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width">
+        <title>List Host</title>
+        <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
+    </head>
+    <body>
+    <h1>List Host</h1>
+    <h3>Request Parameter</h3>
+    <table id="request" border="0" cellspacing="5" cellpadding="5" class="pure-table pure-table-bordered">
+        <thead>
+        <tr>
+            <th>Parameter</th>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Required</th>
+        </tr>
+            
+        </thead>
+        <tr>
+            <td>Region</td>
+            <td>String</td>
+            <td>DataBase Center</td>
+            <td>Yes</td>
+        </tr>
+    </table>
+    <h3>Response Element</h3>
+    <table id="response" border="0" cellspacing="5" cellpadding="5" class="pure-table pure-table-bordered">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Description</th>
+        </tr>
+        </thead>
+        <tr>
+            <td>Action</td>
+            <td>String</td>
+            <td>Response To action of</td>
+        </tr>
+        <tr>
+            <td>TotalCount</td>
+            <td>Integer</td>
+            <td>Total instance that in this region</td>
+        </tr>
+        <tr>
+            <td>TagSet</td>
+            <td>Array</td>
+            <td>Tag of Instance</td>
+        </tr>
+    </table>
+    <h3>TagSet</h3>
+    <table id="TagSet"  border="0" cellspacing="5" cellpadding="5" class="extra pure-table pure-table-bordered">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Description</th>
+        </tr>
+        </thead>
+        <tr>
+            <td>Tag</td>
+            <td>String</td>
+            <td>Tag name </td>
+        </tr>
+        <tr>
+            <td>TotalCount</td>
+            <td>Integer</td>
+            <td>Total instance that in this region</td>
+        </tr>
+    </table>
+    </body>
+</html>

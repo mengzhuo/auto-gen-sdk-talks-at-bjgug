@@ -1,0 +1,172 @@
+Go自动生成SDK实践
+Go语言北京用户组
+27 Feb 2016
+
+蒙卓 (mengzhuo)
+mengzhuo1203@gmail.com
+@mengzhuo
+
+* 项目代码
+此代码仅为演示，没有版权，随意使用
+https://github.com/mengzhuo/auto-gen-sdk-talks-at-bjgug
+
+* 我们(要)推出Golang SDK啦！
+API样式
+.html ./api/index.html
+还有100多个……
+
+* 如何编写SDK？
+(复制粘贴，写API函数) X 100+次
+.image ./img/copy-paste.jpg
+_呵呵_
+
+* 更进一步！
+.image ./img/more.jpg _ 300
+
+* Reflect
+定义：
+_Reflection_in_computing_is_the_ability_of_a_program_to_examine_its_own_structure_
+Reflection（反射）就是程序有检查自身结构的能力
+.image ./img/reflected_gopher.jpg
+
+* 如何利用Reflect制作SDK
+简介
+.code codes/reflect_intro.go 
+
+* 如何利用Reflect制作SDK
+例子
+.play codes/reflect_example.go
+
+
+* 如何利用Reflect制作SDK
+构建Request类
+.code codes/reflect_request.go /START OMIT/,/END OMIT/
+
+* 如何利用Reflect制作SDK
+构建Request类
+.code codes/reflect_request.go /START OMIT/,/END OMIT/
+- 由｀｀封闭起来的叫做Struct Tag
+- 在reflect里可以用 Field().Tag.Get(<指定项>)获得
+
+* 如何利用Reflect制作SDK
+构建Response类
+.code codes/reflect_request.go
+
+* 如何利用Reflect制作SDK
+.code -edit codes/connection.go 
+
+* 如何利用Reflect制作SDK
+总结
+reflect可以获得类型和值
+reflect tag可以进一步细化操作
+
+* 如何利用Reflect制作SDK
+缺点
+- 运行速度慢  
+- 还是要复制粘贴一段时间
+- 不太好debug ：（
+
+* 更进一步！
+.image ./img/more.jpg _ 300
+
+* 如何借助Go generate 生成SDK?
+1. 编写生成代码
+2. $go generate
+
+  +-------------------------+                  +---------------------+
+  | API                     |                  |                     |
+  |  +-> StartInstance.html |                  |  StartInstance.go   |
+  |  |                      |   go generate    |                     |
+  |  +-> StopInstance.html  +----------------> |  StopInstance.go    |
+  |  |                      |                  |                     |
+  |  +-> ListHost.html      |                  |  ListHost.go        |
+  |                         |                  |                     |
+  +-------------------------+                  +---------------------+
+
+* Go generate 介绍
+文件格式
+
+    //go:generate <cmd>
+
+1. 搜索GOPATH下所有//go:generate开头的代码文件
+2. 执行所有<cmd>
+
+.link https://blog.golang.org/generate _官方简介_
+_咱不会_yacc……_
+
+
+* 一些窍门
+
+    go run gen.go
+
+- 巧用// +build ignore
+- text/template
+- go run 很快！
+
+* 生成器讲解
+gen.go
+Elem对象
+.code gen.go /^type Elem/,/^}/
+
+* 生成器讲解
+构建Request类
+通过HTML解析，获取Elem
+
+* 生成器讲解
+构建Request类
+.code gen.go /^type Elem/,/^}/
+    +--------+--------+------+----------+
+    |  Name  |  Type  | Doc  | Required |
+    +--------+--------+------+----------+
+    | Region | String | blah | Yes      |
+    | HostID | String | blah | Yes      |
+    +--------+--------+------+----------+
+
+* 生成器讲解
+使用Request类
+
+    func (r *{{.Name}}) GenURL() (v *url.Values) {
+        setAuth(v)
+        {{range $elem := .Parameters}}
+        {{if eq $elem.Type "Integer" }}
+            v.Set("{{ $elem.Name }}", intToString(r.{{$elem.Name}}))
+        {{else}}
+            v.Set("{{ $elem.Name }}", r.{{$elem.Name}})
+        {{end}}
+        {{end}}
+        v.Set("Action", "{{.Name}}")
+        return v
+    }
+
+* 生成器讲解
+生成的Request类的代码 
+
+    /* 《我只是说明》
+    +--------+--------+------+----------+
+    |  Name  |  Type  | Doc  | Required |
+    +--------+--------+------+----------+
+    | Region | String | blah | Yes      |
+    | HostID | String | blah | Yes      |
+    +--------+--------+------+----------+
+    */
+
+    func (r *StartInstance) GenURL() (v *url.Values) {
+        setAuth(v)
+        v.Set("Region", r.Region)
+        v.Set("HostId", r.HostId)
+        v.Set("Action", "StartInstance")
+        return v
+    }
+
+* 生成器讲解
+Demo
+
+* 生成器讲解
+优点
+- 容易debug
+- 可以重复
+- 不会复制粘贴错 
+
+* Let the machine do the work -- Rob Pike
+* Happy Hacking Q&A
+
